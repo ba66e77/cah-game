@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cards Against Humanity</title>
+<link href="https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@400;700;900&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #0a0a0a;
+    --white: #f5f5f0;
+    --off-white: #e8e8e0;
+    --accent: #1a1a1a;
+    --card-radius: 12px;
+    --font-main: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: var(--font-main);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  header {
+    width: 100%;
+    max-width: 900px;
+    padding: 32px 24px 0;
+    text-align: center;
+  }
+
+  header h1 {
+    font-size: clamp(1.4rem, 4vw, 2.2rem);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+
+  header p {
+    font-size: 0.85rem;
+    color: #777;
+    margin-top: 8px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* ── SCREENS ── */
+  .screen { display: none; width: 100%; max-width: 900px; padding: 24px; }
+  .screen.active { display: block; }
+
+  /* ── PICK BLACK CARD SCREEN ── */
+  #screen-pick h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #aaa;
+    margin-bottom: 20px;
+  }
+
+  .black-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+  }
+
+  .black-card-option {
+    background: var(--black);
+    border: 2px solid #333;
+    border-radius: var(--card-radius);
+    padding: 20px 18px 36px;
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+    position: relative;
+    min-height: 160px;
+  }
+
+  .black-card-option:hover {
+    border-color: var(--white);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(255,255,255,0.08);
+  }
+
+  .black-card-option .card-text {
+    font-size: 0.92rem;
+    font-weight: 700;
+    line-height: 1.45;
+    color: var(--white);
+  }
+
+  .black-card-option .pick-badge {
+    position: absolute;
+    bottom: 12px;
+    right: 14px;
+    font-size: 0.7rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    color: #888;
+    text-transform: uppercase;
+  }
+
+  /* ── SHARE SCREEN ── */
+  #screen-share { text-align: center; }
+
+  .big-black-card {
+    background: var(--black);
+    border: 3px solid #444;
+    border-radius: var(--card-radius);
+    padding: 32px 28px 48px;
+    max-width: 360px;
+    margin: 0 auto 28px;
+    text-align: left;
+    position: relative;
+  }
+
+  .big-black-card .card-text {
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.5;
+    color: var(--white);
+  }
+
+  .big-black-card .card-logo {
+    position: absolute;
+    bottom: 14px;
+    left: 18px;
+    font-size: 0.65rem;
+    color: #555;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .big-black-card .pick-badge {
+    position: absolute;
+    bottom: 14px;
+    right: 18px;
+    font-size: 0.7rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    color: #666;
+    text-transform: uppercase;
+  }
+
+  #screen-share h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #aaa;
+    margin-bottom: 20px;
+  }
+
+  .share-link-box {
+    display: flex;
+    gap: 10px;
+    max-width: 500px;
+    margin: 0 auto 12px;
+    align-items: stretch;
+  }
+
+  .share-link-box input {
+    flex: 1;
+    background: #1a1a1a;
+    border: 2px solid #333;
+    border-radius: 8px;
+    color: var(--white);
+    font-family: monospace;
+    font-size: 0.8rem;
+    padding: 10px 14px;
+    outline: none;
+  }
+
+  .btn {
+    background: var(--white);
+    color: var(--black);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-family: var(--font-main);
+    font-weight: 900;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+    white-space: nowrap;
+  }
+
+  .btn:hover { opacity: 0.88; transform: translateY(-1px); }
+  .btn:active { transform: translateY(0); }
+
+  .btn-outline {
+    background: transparent;
+    border: 2px solid #444;
+    color: var(--white);
+    margin-top: 10px;
+  }
+
+  .btn-outline:hover { border-color: var(--white); }
+
+  /* ── ANSWER SCREEN ── */
+  #screen-answer h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #aaa;
+    margin-bottom: 8px;
+  }
+
+  #screen-answer .subtitle {
+    font-size: 0.82rem;
+    color: #666;
+    margin-bottom: 24px;
+    letter-spacing: 0.03em;
+  }
+
+  .white-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+
+  .white-card-option {
+    background: var(--white);
+    border: 3px solid transparent;
+    border-radius: var(--card-radius);
+    padding: 20px 18px 40px;
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+    position: relative;
+    min-height: 150px;
+  }
+
+  .white-card-option:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(255,255,255,0.15);
+  }
+
+  .white-card-option.selected {
+    border-color: var(--black);
+    box-shadow: 0 0 0 3px var(--white), 0 8px 24px rgba(255,255,255,0.2);
+  }
+
+  .white-card-option .card-text {
+    font-size: 0.9rem;
+    font-weight: 700;
+    line-height: 1.45;
+    color: var(--black);
+  }
+
+  .white-card-option .card-logo {
+    position: absolute;
+    bottom: 12px;
+    left: 14px;
+    font-size: 0.6rem;
+    color: #aaa;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .order-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 24px;
+    height: 24px;
+    background: var(--black);
+    color: var(--white);
+    border-radius: 50%;
+    font-size: 0.75rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .result-order-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #aaa;
+    margin-bottom: 8px;
+  }
+
+  /* ── RESULT SCREEN ── */
+  #screen-result { text-align: center; }
+
+  #screen-result h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #aaa;
+    margin-bottom: 24px;
+  }
+
+  .result-pair {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+  }
+
+  .result-black-card, .result-white-card {
+    border-radius: var(--card-radius);
+    padding: 28px 24px 44px;
+    width: 240px;
+    text-align: left;
+    position: relative;
+    min-height: 180px;
+  }
+
+  .result-black-card {
+    background: var(--black);
+    border: 3px solid #555;
+  }
+
+  .result-white-card {
+    background: var(--white);
+    border: 3px solid #ddd;
+  }
+
+  .result-black-card .card-text {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.45;
+    color: var(--white);
+  }
+
+  .result-white-card .card-text {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.45;
+    color: var(--black);
+  }
+
+  .result-black-card .card-logo {
+    position: absolute; bottom: 12px; left: 16px;
+    font-size: 0.6rem; color: #555; font-weight: 700;
+    letter-spacing: 0.05em; text-transform: uppercase;
+  }
+
+  .result-white-card .card-logo {
+    position: absolute; bottom: 12px; left: 16px;
+    font-size: 0.6rem; color: #bbb; font-weight: 700;
+    letter-spacing: 0.05em; text-transform: uppercase;
+  }
+
+  /* ── SHARE IMAGE CANVAS ── */
+  #share-canvas { display: none; }
+
+  .copy-notice {
+    font-size: 0.78rem;
+    color: #4caf50;
+    margin-top: 6px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    height: 20px;
+  }
+
+  .copy-notice.show { opacity: 1; }
+
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Cards Against Humanity</h1>
+  <p>The party game for horrible people</p>
+</header>
+
+<!-- SCREEN: PICK BLACK CARD -->
+<div class="screen active" id="screen-pick">
+  <h2>Choose a black card to send</h2>
+  <div class="black-card-grid" id="black-card-grid"></div>
+</div>
+
+<!-- SCREEN: SHARE LINK -->
+<div class="screen" id="screen-share">
+  <h2>Your black card</h2>
+  <div class="big-black-card" id="share-preview-card">
+    <div class="card-text" id="share-card-text"></div>
+    <div class="card-logo">Cards Against Humanity</div>
+    <div class="pick-badge" id="share-pick-badge"></div>
+  </div>
+  <p style="color:#888;font-size:0.85rem;margin-bottom:16px;">Share this link with your friends — they'll get 5 random white cards to answer with.</p>
+  <div class="share-link-box">
+    <input type="text" id="share-link-input" readonly>
+    <button class="btn" onclick="copyLink()">Copy</button>
+  </div>
+  <div class="copy-notice" id="copy-notice">✓ Copied to clipboard!</div>
+  <br>
+  <button class="btn btn-outline" onclick="goBack()">← Pick a different card</button>
+</div>
+
+<!-- SCREEN: ANSWER -->
+<div class="screen" id="screen-answer">
+  <h2>Pick your answer</h2>
+  <p class="subtitle">You've been dealt 5 cards. Choose your best answer.</p>
+  <div class="big-black-card" id="answer-black-card" style="max-width:100%;margin-bottom:24px;">
+    <div class="card-text" id="answer-black-text"></div>
+    <div class="card-logo">Cards Against Humanity</div>
+    <div class="pick-badge" id="answer-pick-badge"></div>
+  </div>
+  <div class="white-card-grid" id="white-card-grid"></div>
+  <div style="text-align:center;">
+    <button class="btn" id="submit-btn" onclick="submitAnswer()" disabled style="opacity:0.4;cursor:not-allowed;">Submit Answer</button>
+  </div>
+</div>
+
+<!-- SCREEN: RESULT -->
+<div class="screen" id="screen-result">
+  <h2>Your answer</h2>
+  <div class="result-pair" id="result-pair"></div>
+  <canvas id="share-canvas"></canvas>
+  <div class="btn-row">
+    <button class="btn" onclick="downloadImage()">⬇ Save as Image</button>
+    <button class="btn btn-outline" onclick="shareImage()">Share Image</button>
+  </div>
+  <br>
+  <button class="btn btn-outline" onclick="location.href=location.origin+location.pathname">Play Again</button>
+</div>
+
+<script src="black-cards.js"></script>
+<script src="white-cards.js"></script>
+<script>
+// ── ROUTING ───────────────────────────────────────────────────────────────────
+
+let selectedWhiteCards = []; // ordered; length 1 for Pick 1, 2 for Pick 2
+let currentBlackCard = null;
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function init() {
+  const params = new URLSearchParams(location.search);
+  const cardIdx = params.get('card');
+  if (cardIdx !== null && BLACK_CARDS[cardIdx]) {
+    loadAnswerScreen(parseInt(cardIdx));
+  } else {
+    loadPickScreen();
+  }
+}
+
+// ── PICK SCREEN ───────────────────────────────────────────────────────────────
+
+function loadPickScreen() {
+  const grid = document.getElementById('black-card-grid');
+  grid.innerHTML = '';
+  BLACK_CARDS.forEach((card, i) => {
+    const div = document.createElement('div');
+    div.className = 'black-card-option';
+    div.innerHTML = `
+      <div class="card-text">${card.text}</div>
+      ${card.pick > 1 ? `<div class="pick-badge">Pick ${card.pick}</div>` : ''}
+    `;
+    div.onclick = () => selectBlackCard(i);
+    grid.appendChild(div);
+  });
+  showScreen('screen-pick');
+}
+
+function selectBlackCard(idx) {
+  currentBlackCard = BLACK_CARDS[idx];
+  document.getElementById('share-card-text').textContent = currentBlackCard.text;
+  document.getElementById('share-pick-badge').textContent = currentBlackCard.pick > 1 ? `Pick ${currentBlackCard.pick}` : '';
+
+  const url = `${location.origin}${location.pathname}?card=${idx}`;
+  document.getElementById('share-link-input').value = url;
+  showScreen('screen-share');
+}
+
+function goBack() { loadPickScreen(); }
+
+function copyLink() {
+  const input = document.getElementById('share-link-input');
+  navigator.clipboard.writeText(input.value).catch(() => {
+    input.select();
+    document.execCommand('copy');
+  });
+  const notice = document.getElementById('copy-notice');
+  notice.classList.add('show');
+  setTimeout(() => notice.classList.remove('show'), 2000);
+}
+
+// ── ANSWER SCREEN ─────────────────────────────────────────────────────────────
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function updateSubmitBtn() {
+  const btn = document.getElementById('submit-btn');
+  const ready = selectedWhiteCards.length === currentBlackCard.pick;
+  btn.disabled = !ready;
+  btn.style.opacity = ready ? '1' : '0.4';
+  btn.style.cursor = ready ? 'pointer' : 'not-allowed';
+}
+
+function updateSubtitle() {
+  const needed = currentBlackCard.pick;
+  const chosen = selectedWhiteCards.length;
+  const el = document.querySelector('#screen-answer .subtitle');
+  if (needed === 1) {
+    el.textContent = "You've been dealt 6 cards. Choose your best answer.";
+  } else {
+    if (chosen === 0) el.textContent = "Pick 2 cards in order — 1st fills the first blank, 2nd fills the second.";
+    else if (chosen === 1) el.textContent = "Good. Now pick your 2nd card for the second blank.";
+    else el.textContent = "Both blanks filled! Submit when ready, or tap a card to change it.";
+  }
+}
+
+function loadAnswerScreen(idx) {
+  currentBlackCard = BLACK_CARDS[idx];
+  selectedWhiteCards = [];
+
+  document.getElementById('answer-black-text').textContent = currentBlackCard.text;
+  document.getElementById('answer-pick-badge').textContent = currentBlackCard.pick > 1 ? `Pick ${currentBlackCard.pick}` : '';
+
+  const hand = shuffle(WHITE_CARDS).slice(0, 6);
+  const grid = document.getElementById('white-card-grid');
+  grid.innerHTML = '';
+
+  hand.forEach((text) => {
+    const div = document.createElement('div');
+    div.className = 'white-card-option';
+    div.innerHTML = `<div class="card-text">${text}</div><div class="card-logo">Cards Against Humanity</div>`;
+    div.onclick = () => toggleWhiteCard(div, text);
+    grid.appendChild(div);
+  });
+
+  updateSubtitle();
+  updateSubmitBtn();
+  showScreen('screen-answer');
+}
+
+function toggleWhiteCard(el, text) {
+  const needed = currentBlackCard.pick;
+  const alreadyIdx = selectedWhiteCards.indexOf(text);
+
+  if (alreadyIdx !== -1) {
+    // Deselect
+    selectedWhiteCards.splice(alreadyIdx, 1);
+  } else {
+    if (selectedWhiteCards.length >= needed) return;
+    selectedWhiteCards.push(text);
+  }
+
+  // Redraw all card states and badges
+  document.querySelectorAll('.white-card-option').forEach(card => {
+    const cardText = card.querySelector('.card-text').textContent;
+    const orderIdx = selectedWhiteCards.indexOf(cardText);
+    card.querySelector('.order-badge')?.remove();
+    if (orderIdx !== -1) {
+      card.classList.add('selected');
+      if (needed > 1) {
+        const badge = document.createElement('div');
+        badge.className = 'order-badge';
+        badge.textContent = orderIdx + 1;
+        card.appendChild(badge);
+      }
+    } else {
+      card.classList.remove('selected');
+    }
+  });
+
+  updateSubtitle();
+  updateSubmitBtn();
+}
+
+// ── RESULT SCREEN ─────────────────────────────────────────────────────────────
+
+function submitAnswer() {
+  if (selectedWhiteCards.length !== currentBlackCard.pick) return;
+
+  const pair = document.getElementById('result-pair');
+  const whiteCardsHTML = selectedWhiteCards.map((text, i) => `
+    <div class="result-white-card">
+      ${currentBlackCard.pick > 1 ? `<div class="result-order-label">${i === 0 ? '1st blank' : '2nd blank'}</div>` : ''}
+      <div class="card-text">${text}</div>
+      <div class="card-logo">Cards Against Humanity</div>
+    </div>
+  `).join('');
+
+  pair.innerHTML = `
+    <div class="result-black-card">
+      <div class="card-text">${currentBlackCard.text}</div>
+      <div class="card-logo">Cards Against Humanity</div>
+    </div>
+    ${whiteCardsHTML}
+  `;
+
+  showScreen('screen-result');
+  renderCanvas();
+}
+
+// ── CANVAS RENDERING ──────────────────────────────────────────────────────────
+
+function renderCanvas() {
+  const canvas = document.getElementById('share-canvas');
+  const ctx = canvas.getContext('2d');
+
+  const isPick2 = currentBlackCard.pick === 2;
+  const CARD_W = 220, CARD_H = 300, PAD = 22, RADIUS = 12, GAP = 16;
+  const totalCards = 1 + selectedWhiteCards.length;
+  const W = PAD * 2 + CARD_W * totalCards + GAP * (totalCards - 1) + 20;
+  const H = CARD_H + 80;
+
+  canvas.width = W;
+  canvas.height = H;
+
+  ctx.fillStyle = '#111';
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.fillStyle = '#444';
+  ctx.font = 'bold 10px Helvetica Neue, Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('CARDS AGAINST HUMANITY', W / 2, 24);
+
+  const startY = 38;
+  const bx = PAD + 10;
+
+  // Black card
+  roundRect(ctx, bx, startY, CARD_W, CARD_H, RADIUS, '#0a0a0a', '#555', 3);
+  wrapText(ctx, currentBlackCard.text, bx + PAD, startY + PAD, CARD_W - PAD * 2, 16, '#f5f5f0', 'bold 12px Helvetica Neue, Arial, sans-serif');
+  ctx.fillStyle = '#555';
+  ctx.font = 'bold 8px Helvetica Neue, Arial, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('Cards Against Humanity', bx + PAD, startY + CARD_H - 14);
+
+  // White card(s)
+  selectedWhiteCards.forEach((text, i) => {
+    const wx = bx + CARD_W + GAP + i * (CARD_W + GAP);
+    roundRect(ctx, wx, startY, CARD_W, CARD_H, RADIUS, '#f5f5f0', '#ddd', 3);
+    if (isPick2) {
+      ctx.fillStyle = '#999';
+      ctx.font = 'bold 8px Helvetica Neue, Arial, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(i === 0 ? '1ST BLANK' : '2ND BLANK', wx + PAD, startY + 16);
+      wrapText(ctx, text, wx + PAD, startY + 30, CARD_W - PAD * 2, 16, '#0a0a0a', 'bold 12px Helvetica Neue, Arial, sans-serif');
+    } else {
+      wrapText(ctx, text, wx + PAD, startY + PAD, CARD_W - PAD * 2, 16, '#0a0a0a', 'bold 12px Helvetica Neue, Arial, sans-serif');
+    }
+    ctx.fillStyle = '#aaa';
+    ctx.font = 'bold 8px Helvetica Neue, Arial, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('Cards Against Humanity', wx + PAD, startY + CARD_H - 14);
+  });
+}
+
+function roundRect(ctx, x, y, w, h, r, fill, stroke, lineWidth) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+  if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+  if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = lineWidth; ctx.stroke(); }
+}
+
+function wrapText(ctx, text, x, y, maxWidth, lineHeight, color, font) {
+  ctx.font = font;
+  ctx.fillStyle = color;
+  ctx.textAlign = 'left';
+  const words = text.split(' ');
+  let line = '';
+  let cy = y;
+  for (const word of words) {
+    const test = line + (line ? ' ' : '') + word;
+    if (ctx.measureText(test).width > maxWidth && line) {
+      ctx.fillText(line, x, cy);
+      line = word;
+      cy += lineHeight;
+    } else {
+      line = test;
+    }
+  }
+  if (line) ctx.fillText(line, x, cy);
+}
+
+function downloadImage() {
+  renderCanvas();
+  const canvas = document.getElementById('share-canvas');
+  const a = document.createElement('a');
+  a.download = 'cards-against-humanity.png';
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+}
+
+async function shareImage() {
+  renderCanvas();
+  const canvas = document.getElementById('share-canvas');
+  canvas.toBlob(async (blob) => {
+    const file = new File([blob], 'cards-against-humanity.png', { type: 'image/png' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], title: 'My Cards Against Humanity answer' });
+    } else {
+      downloadImage();
+    }
+  });
+}
+
+// ── START ─────────────────────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
