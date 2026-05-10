@@ -723,7 +723,7 @@ async function shareImage() {
   canvas.toBlob(async (blob) => {
     const file = new File([blob], 'cards-against-humanity.png', { type: 'image/png' });
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      await navigator.share({ files: [file], title: 'My Cards Against Humanity answer' });
+      await navigator.share({ files: [file] });
     } else {
       downloadImage();
     }
