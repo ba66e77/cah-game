@@ -81,7 +81,7 @@ const BLACK_CARDS = [
   { text: "What turned me into a Republican?", pick: 1, pack: "Green Box" },
   { text: "One more thing. Watch out for Big Mike. They say he killed a man with ___.", pick: 1, pack: "Green Box" },
   { text: "You won't believe what's in my pussy. It's ___.", pick: 1, pack: "Green Box" },
-  { text: "be all like ___.", pick: 2, pack: "Green Box" },
+  { text: "___ be all like ___.", pick: 2, pack: "Green Box" },
   { text: "Then the princess kissed the frog, and all of a sudden the frog was ___!", pick: 1, pack: "Green Box" },
   { text: "What's the gayest?", pick: 1, pack: "Green Box" },
 
