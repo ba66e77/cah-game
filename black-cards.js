@@ -7,7 +7,7 @@ const BLACK_CARDS = [
   { text: "Having tired of poetry and music, the immortal elves now fill their days with ___.", pick: 1, pack: "Nerd" },
   { text: "Legend tells of a princess who has been asleep for a thousand years and can only be awoken by ___.", pick: 1, pack: "Nerd" },
   { text: "___ is way better in ___ mode.", pick: 2, pack: "Nerd" },
-  { text: "Madam President, the asteroid is headed directly for Earth and there's only one thing that can stop it: ___.", pick: 2, pack: "Nerd" },
+  { text: "Madam President, the asteroid is headed directly for Earth and there's only one thing that can stop it: ___.", pick: 1, pack: "Nerd" },
   { text: "What is the answer to life, the universe, and everything?", pick: 1, pack: "Nerd" },
   { text: "You're not going to believe this, but I'm you from the future! You've got to stop ___.", pick: 1, pack: "Nerd" },
   { text: "Your father was a powerful wizard, Harry. Before he died, he left you something very precious: ___.", pick: 1, pack: "Nerd" },
