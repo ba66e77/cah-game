@@ -474,6 +474,7 @@ function loadPickScreen() {
     div.innerHTML = `
       <div class="card-text">${card.text}</div>
       ${card.pick > 1 ? `<div class="pick-badge">Pick ${card.pick}</div>` : ''}
+      ${card.pack !== 'Base' ? `<div style="position:absolute;bottom:12px;left:14px;font-size:0.6rem;color:#666;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;">${card.pack}</div>` : ''}
     `;
     div.onclick = () => selectBlackCard(i);
     grid.appendChild(div);
@@ -547,10 +548,11 @@ function loadAnswerScreen(idx) {
   const grid = document.getElementById('white-card-grid');
   grid.innerHTML = '';
 
-  hand.forEach((text) => {
+  hand.forEach((card) => {
+    const text = card.text;
     const div = document.createElement('div');
     div.className = 'white-card-option';
-    div.innerHTML = `<div class="card-text">${text}</div><div class="card-logo">Cards Against Humanity</div>`;
+    div.innerHTML = `<div class="card-text">${text}</div><div class="card-logo">Cards Against Humanity${card.pack !== 'Base' ? ' · ' + card.pack : ''}</div>`;
     div.onclick = () => toggleWhiteCard(div, text);
     grid.appendChild(div);
   });
