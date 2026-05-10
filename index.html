@@ -403,13 +403,10 @@
     <div class="pick-badge" id="share-pick-badge"></div>
   </div>
   <p style="color:#888;font-size:0.85rem;margin-bottom:16px;">Share this link with your friends — they'll get 5 random white cards to answer with.</p>
-  <div class="share-link-box">
-    <input type="text" id="share-link-input" readonly>
-    <button class="btn" onclick="copyLink()">Copy</button>
+  <div class="btn-row">
+    <button class="btn" onclick="shareLink()">Share</button>
+    <button class="btn btn-outline" onclick="goBack()">← Pick a different card</button>
   </div>
-  <div class="copy-notice" id="copy-notice">✓ Copied to clipboard!</div>
-  <br>
-  <button class="btn btn-outline" onclick="goBack()">← Pick a different card</button>
 </div>
 
 <!-- SCREEN: ANSWER -->
@@ -447,6 +444,7 @@
 
 let selectedWhiteCards = []; // ordered; length 1 for Pick 1, 2 for Pick 2
 let currentBlackCard = null;
+let currentShareUrl = '';
 
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -487,22 +485,61 @@ function selectBlackCard(idx) {
   document.getElementById('share-card-text').textContent = currentBlackCard.text;
   document.getElementById('share-pick-badge').textContent = currentBlackCard.pick > 1 ? `Pick ${currentBlackCard.pick}` : '';
 
-  const url = `${location.origin}${location.pathname}?card=${idx}`;
-  document.getElementById('share-link-input').value = url;
+  currentShareUrl = `${location.origin}${location.pathname}?card=${idx}`;
   showScreen('screen-share');
 }
 
 function goBack() { loadPickScreen(); }
 
-function copyLink() {
-  const input = document.getElementById('share-link-input');
-  navigator.clipboard.writeText(input.value).catch(() => {
-    input.select();
-    document.execCommand('copy');
+function renderBlackCardCanvas() {
+  const canvas = document.getElementById('share-canvas');
+  const ctx = canvas.getContext('2d');
+  const CARD_W = 300, CARD_H = 400, PAD = 28, RADIUS = 14;
+  canvas.width = CARD_W + PAD * 2;
+  canvas.height = CARD_H + PAD * 2;
+
+  ctx.fillStyle = '#111';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  roundRect(ctx, PAD, PAD, CARD_W, CARD_H, RADIUS, '#0a0a0a', '#555', 3);
+  wrapText(ctx, currentBlackCard.text, PAD * 2, PAD * 2 + 18, CARD_W - PAD * 2, 20, '#f5f5f0', 'bold 14px Helvetica Neue, Arial, sans-serif');
+
+  ctx.fillStyle = '#555';
+  ctx.font = 'bold 8px Helvetica Neue, Arial, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('Cards Against Humanity', PAD * 2, PAD + CARD_H - 16);
+
+  if (currentBlackCard.pick > 1) {
+    ctx.fillStyle = '#666';
+    ctx.font = 'bold 9px Helvetica Neue, Arial, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(`PICK ${currentBlackCard.pick}`, PAD + CARD_W - 12, PAD + CARD_H - 16);
+  }
+
+  return canvas;
+}
+
+async function shareLink() {
+  const canvas = renderBlackCardCanvas();
+  canvas.toBlob(async (blob) => {
+    const file = new File([blob], 'cards-against-humanity.png', { type: 'image/png' });
+    if (navigator.canShare && navigator.canShare({ files: [file], url: currentShareUrl })) {
+      await navigator.share({ files: [file], url: currentShareUrl });
+    } else if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file] });
+    } else if (navigator.share) {
+      await navigator.share({ url: currentShareUrl });
+    } else {
+      await navigator.clipboard.writeText(currentShareUrl).catch(() => {
+        const tmp = document.createElement('input');
+        document.body.appendChild(tmp);
+        tmp.value = currentShareUrl;
+        tmp.select();
+        document.execCommand('copy');
+        document.body.removeChild(tmp);
+      });
+    }
   });
-  const notice = document.getElementById('copy-notice');
-  notice.classList.add('show');
-  setTimeout(() => notice.classList.remove('show'), 2000);
 }
 
 // ── ANSWER SCREEN ─────────────────────────────────────────────────────────────
