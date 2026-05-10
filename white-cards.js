@@ -60,7 +60,7 @@ const WHITE_CARDS = [
   { text: "A protagonist with no qualities.", pack: "Nerd" },
   { text: "Going too far with science and bad things happening.", pack: "Nerd" },
   { text: "Vulcan sex-madness.", pack: "Nerd" },
-  { text: "That girl from the Hungry Games.", pack: "Nerd" },
+  { text: "That girl from the Hunger Games.", pack: "Nerd" },
   { text: "Cheerful blowjob robots.", pack: "Nerd" },
   { text: "Three boobs.", pack: "Nerd" },
   { text: "Funkified aliens from the planet Groovius.", pack: "Nerd" },
