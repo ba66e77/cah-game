@@ -44,7 +44,7 @@ const BLACK_CARDS = [
   { text: "LSD + ___ = really bad time.", pick: 1, pack: "Green Box" },
   { text: "I tell you, it was a non-stop fuckfest. When it was over, my asshole looked like ___.", pick: 1, pack: "Green Box" },
   { text: "What sucks balls?", pick: 1, pack: "Green Box" },
-  { text: "Brought to you by ___.", pick: 2, pack: "Green Box" },
+  { text: "___: Brought to you by ___.", pick: 2, pack: "Green Box" },
   { text: "Most Americans would not vote for a candidate who is openly ___.", pick: 1, pack: "Green Box" },
   { text: "The top Google auto-complete results for \"Barack Obama\": Barack Obama height. Barack Obama net worth. Barack Obama ___.", pick: 1, pack: "Green Box" },
   { text: "If at first you don't succeed, try ___.", pick: 1, pack: "Green Box" },
