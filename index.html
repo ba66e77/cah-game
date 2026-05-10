@@ -459,7 +459,9 @@ function init() {
   if (cardIdx !== null && BLACK_CARDS[cardIdx]) {
     loadAnswerScreen(parseInt(cardIdx));
   } else {
-    loadPickScreen();
+     // No card specified — pick one at random
+     const randomIdx = Math.floor(Math.random() * BLACK_CARDS.length);
+     loadAnswerScreen(randomIdx);
   }
 }
 
