@@ -22,7 +22,7 @@ const BLACK_CARDS = [
 
   // ── Dad Pack ──────────────────────────────────────────────────────────────────
   { text: "So apparently Dad was searching Pornhub for \"hot milf ___\".", pick: 1, pack: "Dad Pack" },
-  { text: "FW: FW: FW: WARNING!!! VIOLENT GANGS VOREGRUNT CHILDREN!", pick: 1, pack: "Dad Pack" },
+  { text: "FW: FW: FW: WARNING!!! VIOLENT GANGS USING ___ TO RECRUIT CHILDREN!", pick: 1, pack: "Dad Pack" },
   { text: "Whaddya think, money grows on trees? I'm not paying for ___.", pick: 1, pack: "Dad Pack" },
   { text: "Coming up on Turner Classic Movies: Sean Connery and Alec Baldwin star in \"The Hunt for ___\".", pick: 1, pack: "Dad Pack" },
   { text: "Hey, kids. I'm Connor's dad, but you can call me ___.", pick: 1, pack: "Dad Pack" },
@@ -51,7 +51,7 @@ const BLACK_CARDS = [
   { text: "CNN breaking news! Scientists discover ___.", pick: 1, pack: "Green Box" },
   { text: "Best you go back where you came from, now. We don't take too kindly to ___ in these parts.", pick: 1, pack: "Green Box" },
   { text: "I'm sorry, sir, but your insurance plan doesn't cover injuries caused by ___.", pick: 1, pack: "Green Box" },
-  { text: "You know who else liked Hitler?", pick: 1, pack: "Green Box" },
+  { text: "You know who else liked ______? Hitler.", pick: 1, pack: "Green Box" },
   { text: "In the 1950s, psychologists prescribed ___ as a cure for homosexuality.", pick: 1, pack: "Green Box" },
   { text: "I may not be much to look at, but I fuck like ___.", pick: 1, pack: "Green Box" },
   { text: "As Teddy Roosevelt said, \"the four main virtues are honor, temperance, industry, and ___\".", pick: 1, pack: "Green Box" },
